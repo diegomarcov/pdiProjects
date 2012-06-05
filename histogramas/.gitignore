@@ -1,0 +1,6 @@
+# Local gitignore for the histogram project
+debug/*
+release/*
+Makefile*
+histogramas.pro.user
+ui_mainwindow.h
