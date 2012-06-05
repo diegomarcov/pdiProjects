@@ -1,0 +1,6 @@
+# Local gitignore for the sandbox project
+debug/*
+release/*
+Makefile*
+sandbox.pro.user
+ui_mainwindow.h
