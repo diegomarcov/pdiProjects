@@ -4,3 +4,4 @@ release/*
 Makefile*
 histogramas.pro.user
 ui_mainwindow.h
+ui_plottingdialog.h

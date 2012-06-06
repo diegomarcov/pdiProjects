@@ -2,7 +2,8 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QMessageBox>
-#include "qcustomplot.h"
+#include <QDebug>
+#include "plottingdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
@@ -31,24 +32,9 @@ void MainWindow::loadImage(){
     }
 }
 
-void MainWindow::showHistogram(){
-    QDialog histogramDialog;//will have to inherit from this in order to display the graph
-    QCustomPlot customPlot;
-    customPlot.addGraph();
-    histogramDialog.exec();
+int MainWindow::showHistogram(){
+    PlottingDialog plotDialog;
+    plotDialog.drawHistogram(this->currentImage);
+    qDebug() << "Executing";
+    return plotDialog.exec();
 }
-
-//void MainWindow::drawGraph(){
-//    QVector<double> x(101), y(101);
-//    for(int i=0;i<101;i++){
-//        x[i] = i - 50;
-//        y[i] = x[i] * x[i];
-//    }
-//    ui->customPlot->addGraph();
-//    ui->customPlot->graph(0)->setData(x,y);
-//    ui->customPlot->xAxis->setLabel("x");
-//    ui->customPlot->yAxis->setLabel("y");
-//    ui->customPlot->xAxis->setRange(-50, 50);
-//    ui->customPlot->yAxis->setRange(0, 2500);
-//    ui->customPlot->replot();
-//}
