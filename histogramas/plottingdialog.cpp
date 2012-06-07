@@ -6,9 +6,6 @@
 PlottingDialog::PlottingDialog(QWidget *parent) : QDialog(parent), ui(new Ui::PlottingDialog)
 {
     ui->setupUi(this);
-    ui->customPlot->addGraph();
-    ui->customPlot->addGraph();
-    ui->customPlot->addGraph();
 }
 
 PlottingDialog::~PlottingDialog()
