@@ -1,10 +1,13 @@
 #include "plottingdialog.h"
 #include "ui_plottingdialog.h"
 #include <QRgb>
+#include <cstdio>
 
 PlottingDialog::PlottingDialog(QWidget *parent) : QDialog(parent), ui(new Ui::PlottingDialog)
 {
     ui->setupUi(this);
+    ui->customPlot->addGraph();
+    ui->customPlot->addGraph();
     ui->customPlot->addGraph();
 }
 
@@ -48,23 +51,19 @@ void PlottingDialog::drawHistogram(QImage *img){
     bBar->setName("B Value");
     bBar->setBrush(QBrush(Qt::blue));
     int totalPix = img->width() * img->height();
+    QVector<double> tickVector;
     for(int i = 0;i<16;i++){
         valueRData[i] = valueRData[i] / (double)totalPix;
         valueGData[i] = valueRData[i] / (double)totalPix;
         valueBData[i] = valueRData[i] / (double)totalPix;
+        tickVector.append(i);
     }
     rBar->setData(keyRData, valueRData);
     gBar->setData(keyGData, valueGData);
     bBar->setData(keyBData, valueBData);
-    ui->customPlot->xAxis->setAutoTicks(false);
     QStringList tickNames;
-    char buffer[4] = "";
     for (int i=0;i<255;i=i+16){
-        QString name;
-        qDebug() << "Calling itoa with " << i << buffer << 10;
-        name.append(itoa(i,buffer, 10));
-        name.append("-");
-        name.append(itoa(i+15,buffer,10));
+        QString name = QString::number(i)/* + "-" + QString::number(i+15)*/;
         qDebug() << "Appending" << name;
         tickNames << name;
     }
@@ -72,15 +71,22 @@ void PlottingDialog::drawHistogram(QImage *img){
     qDebug() << "Creating list with " << tickNames;
     QVector<QString> vect = QVector<QString>::fromList(tickNames);
     qDebug() << "Auto tick step to false";
+    ui->customPlot->legend->setVisible(true);
+    ui->customPlot->xAxis->setRange(0,17);
+    ui->customPlot->xAxis->setAutoTicks(false);
     ui->customPlot->xAxis->setAutoTickStep(false);
     ui->customPlot->xAxis->setTickStep(1);
-    qDebug() << "Tick step = 1";
-    ui->customPlot->xAxis->setRange(0,16);
-    qDebug() << "Tick labels";
-    ui->customPlot->xAxis->setTickVectorLabels(&vect);
+    ui->customPlot->xAxis->setAutoSubTicks(true);
+    ui->customPlot->xAxis->setAutoTickLabels(false);
+    qDebug() << "Tick vector" << tickVector;
+    qDebug() << "Tick names" << tickNames;
+    ui->customPlot->xAxis->setTickVector(&tickVector, true);
+    qDebug() << "My tick vector is: " << *(ui->customPlot->xAxis->tickVector());
+    ui->customPlot->xAxis->setTickVectorLabels(&vect, true);
+    qDebug() << "My label vector is: " << *(ui->customPlot->xAxis->tickVectorLabels());
     qDebug() << "Range";
     ui->customPlot->yAxis->setRange(0,1);
-    ui->customPlot->yAxis->setTickStep(0.1);
+//    ui->customPlot->yAxis->setTickStep(0.1);
     ui->customPlot->replot();
     qDebug() << "Replotting";
 }
