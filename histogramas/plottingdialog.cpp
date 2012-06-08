@@ -84,37 +84,30 @@ void PlottingDialog::drawRGBHistogram(QImage *img){
 void PlottingDialog::drawLumHistogram(QImage *img){
     QCPBars *lBar = new QCPBars(ui->customPlot->xAxis, ui->customPlot->yAxis);
     ui->customPlot->addPlottable(lBar);
-    int bins = 10; // edit this to define the number of bins in which the histogram is separated
+    int bins = 16; // edit this to define the number of bins in which the histogram is separated
     QVector<double> keyLData(bins);
     QVector<double> valueLData(bins, 0);
     qreal currentLightness;
     for(int x=0;x<img->width();x++) {
         for(int y=0;y<img->height();y++){
             currentLightness = qFloor(QColor(img->pixel(x,y)).lightnessF() * bins);
-            // in case luminance was exactly 1, last result would return 10!
-            currentLightness = (currentLightness == bins) ? bins-1 : currentLightness;
+            //qDebug() << "CurrentLightness" << currentLightness;
+            //only special case: 100% luminance -> last expression returns BINS == ilegal access!
+            currentLightness = (currentLightness == bins) ? bins -1 : currentLightness;
             valueLData[currentLightness]++;
         }
     }
-    QVector<QString> labelVector;
-    QVector<double> tickVector;
     int totalPix = img->width() * img->height();
     for (int i=0;i<bins;i++){
-        keyLData[i] = i;
-        tickVector.append(i);
-        labelVector.append(QString::number(i/(double) bins));
+        keyLData[i] = (i/(double)bins);
         valueLData[i] = valueLData[i] / (double) totalPix;
     }
+    qDebug() << keyLData;
+    qDebug() << valueLData;
     lBar->setData(keyLData, valueLData);
     ui->customPlot->xAxis->setLabel("Luminance %");
-    ui->customPlot->xAxis->setAutoTicks(false);
-    ui->customPlot->xAxis->setRange(0,bins);
-    ui->customPlot->xAxis->setAutoTickStep(false);
-    ui->customPlot->xAxis->setAutoSubTicks(true);
-    ui->customPlot->xAxis->setAutoTickLabels(false);
-    qDebug() << tickVector;
-    ui->customPlot->xAxis->setTickVector(&tickVector, true);
-    ui->customPlot->xAxis->setTickVectorLabels(&labelVector, true);
+    ui->customPlot->xAxis->setRange(0,1);
+    lBar->setWidth(1/(2*(double)bins));
     ui->customPlot->yAxis->setLabel("Image %");
     ui->customPlot->yAxis->setRange(0,1);
     ui->customPlot->replot();
