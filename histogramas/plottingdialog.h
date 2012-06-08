@@ -14,7 +14,8 @@ class PlottingDialog : public QDialog
 public:
     explicit PlottingDialog(QWidget *parent = 0);
     ~PlottingDialog();
-    void drawHistogram(QImage *image);
+    void drawRGBHistogram(QImage *image);
+    void drawLumHistogram(QImage *image);
     
 private:
     Ui::PlottingDialog *ui;

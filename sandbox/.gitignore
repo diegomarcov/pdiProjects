@@ -4,3 +4,5 @@ release/*
 Makefile*
 sandbox.pro.user
 ui_mainwindow.h
+sandbox
+moc_*

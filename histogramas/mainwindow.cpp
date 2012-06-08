@@ -8,7 +8,8 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
     connect(ui->loadButton, SIGNAL(clicked()), this, SLOT(loadImage()));
-    connect(ui->histButton, SIGNAL(clicked()), this, SLOT(showHistogram()));
+    connect(ui->rgbHistButton, SIGNAL(clicked()), this, SLOT(showRGBHistogram()));
+    connect(ui->lumHistButton, SIGNAL(clicked()), this, SLOT(showLumHistogram()));
     this->currentImage = new QImage();
 //    ui->customPlot->addGraph();
 }
@@ -32,9 +33,16 @@ void MainWindow::loadImage(){
     }
 }
 
-int MainWindow::showHistogram(){
+void MainWindow::showRGBHistogram(){
     PlottingDialog plotDialog;
-    plotDialog.drawHistogram(this->currentImage);
+    plotDialog.drawRGBHistogram(this->currentImage);
     qDebug() << "Executing";
-    return plotDialog.exec();
+    plotDialog.exec();
+}
+
+void MainWindow::showLumHistogram(){
+    PlottingDialog plotDialog;
+    plotDialog.drawLumHistogram(this->currentImage);
+    qDebug() << "Executing";
+    plotDialog.exec();
 }

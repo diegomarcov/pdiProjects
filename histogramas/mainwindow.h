@@ -18,7 +18,8 @@ public:
 
 public slots:
     void loadImage();
-    int showHistogram();
+    void showRGBHistogram();
+    void showLumHistogram();
     
 private:
     Ui::MainWindow *ui;

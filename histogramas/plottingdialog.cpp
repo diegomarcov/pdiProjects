@@ -2,6 +2,7 @@
 #include "ui_plottingdialog.h"
 #include <QRgb>
 #include <cstdio>
+#include <qmath.h>
 
 PlottingDialog::PlottingDialog(QWidget *parent) : QDialog(parent), ui(new Ui::PlottingDialog)
 {
@@ -13,7 +14,7 @@ PlottingDialog::~PlottingDialog()
     delete ui;
 }
 
-void PlottingDialog::drawHistogram(QImage *img){
+void PlottingDialog::drawRGBHistogram(QImage *img){
     QCPBars *rBar = new QCPBars(ui->customPlot->xAxis, ui->customPlot->yAxis);
     QCPBars *gBar = new QCPBars(ui->customPlot->xAxis, ui->customPlot->yAxis);
     QCPBars *bBar = new QCPBars(ui->customPlot->xAxis, ui->customPlot->yAxis);
@@ -65,9 +66,7 @@ void PlottingDialog::drawHistogram(QImage *img){
         tickNames << name;
     }
 
-    qDebug() << "Creating list with " << tickNames;
     QVector<QString> vect = QVector<QString>::fromList(tickNames);
-    qDebug() << "Auto tick step to false";
     ui->customPlot->legend->setVisible(true);
     ui->customPlot->xAxis->setRange(0,17);
     ui->customPlot->xAxis->setAutoTicks(false);
@@ -75,15 +74,48 @@ void PlottingDialog::drawHistogram(QImage *img){
     ui->customPlot->xAxis->setTickStep(1);
     ui->customPlot->xAxis->setAutoSubTicks(true);
     ui->customPlot->xAxis->setAutoTickLabels(false);
-    qDebug() << "Tick vector" << tickVector;
-    qDebug() << "Tick names" << tickNames;
     ui->customPlot->xAxis->setTickVector(&tickVector, true);
-    qDebug() << "My tick vector is: " << *(ui->customPlot->xAxis->tickVector());
     ui->customPlot->xAxis->setTickVectorLabels(&vect, true);
-    qDebug() << "My label vector is: " << *(ui->customPlot->xAxis->tickVectorLabels());
-    qDebug() << "Range";
     ui->customPlot->yAxis->setRange(0,1);
-//    ui->customPlot->yAxis->setTickStep(0.1);
     ui->customPlot->replot();
     qDebug() << "Replotting";
+}
+
+void PlottingDialog::drawLumHistogram(QImage *img){
+    QCPBars *lBar = new QCPBars(ui->customPlot->xAxis, ui->customPlot->yAxis);
+    ui->customPlot->addPlottable(lBar);
+    int bins = 10; // edit this to define the number of bins in which the histogram is separated
+    QVector<double> keyLData(bins);
+    QVector<double> valueLData(bins, 0);
+    qreal currentLightness;
+    for(int x=0;x<img->width();x++) {
+        for(int y=0;y<img->height();y++){
+            currentLightness = qFloor(QColor(img->pixel(x,y)).lightnessF() * bins);
+            // in case luminance was exactly 1, last result would return 10!
+            currentLightness = (currentLightness == bins) ? bins-1 : currentLightness;
+            valueLData[currentLightness]++;
+        }
+    }
+    QVector<QString> labelVector;
+    QVector<double> tickVector;
+    int totalPix = img->width() * img->height();
+    for (int i=0;i<bins;i++){
+        keyLData[i] = i;
+        tickVector.append(i);
+        labelVector.append(QString::number(i/(double) bins));
+        valueLData[i] = valueLData[i] / (double) totalPix;
+    }
+    lBar->setData(keyLData, valueLData);
+    ui->customPlot->xAxis->setLabel("Luminance %");
+    ui->customPlot->xAxis->setAutoTicks(false);
+    ui->customPlot->xAxis->setRange(0,bins);
+    ui->customPlot->xAxis->setAutoTickStep(false);
+    ui->customPlot->xAxis->setAutoSubTicks(true);
+    ui->customPlot->xAxis->setAutoTickLabels(false);
+    qDebug() << tickVector;
+    ui->customPlot->xAxis->setTickVector(&tickVector, true);
+    ui->customPlot->xAxis->setTickVectorLabels(&labelVector, true);
+    ui->customPlot->yAxis->setLabel("Image %");
+    ui->customPlot->yAxis->setRange(0,1);
+    ui->customPlot->replot();
 }
