@@ -21,25 +21,25 @@ void PlottingDialog::drawRGBHistogram(QImage *img){
     ui->customPlot->addPlottable(rBar);
     ui->customPlot->addPlottable(gBar);
     ui->customPlot->addPlottable(bBar);
-    QVector<double> keyRData(16);
-    QVector<double> valueRData(16, 0);
-    QVector<double> keyGData(16);
-    QVector<double> valueGData(16, 0);
-    QVector<double> keyBData(16);
-    QVector<double> valueBData(16, 0);
-    for(int i=0;i<16;i++){
-        keyRData[i] = i+1;
-        keyGData[i] = i+1;
-        keyBData[i] = i+1;
-    }
+    int bins = 16;
+    QVector<double> keyRData(bins);
+    QVector<double> valueRData(bins, 0);
+    QVector<double> keyGData(bins);
+    QVector<double> valueGData(bins, 0);
+    QVector<double> keyBData(bins);
+    QVector<double> valueBData(bins, 0);
     QColor currentPixel;
+    int currentRed, currentGreen, currentBlue;
     // now we can modify properties of myBars:
     for(int x=0;x<img->width();x++){
         for(int y=0;y<img->height();y++){
             currentPixel = QColor(img->pixel(x,y));
-            valueRData[currentPixel.red() / 16]++;
-            valueGData[currentPixel.green() / 16]++;
-            valueBData[currentPixel.blue() / 16]++;
+            currentRed = currentPixel.redF() * bins;
+            valueRData[(currentRed == bins) ? bins - 1 : currentRed]++;
+            currentGreen = currentPixel.greenF() * bins;
+            valueGData[(currentGreen == bins) ? bins - 1 : currentGreen]++;
+            currentBlue = currentPixel.blueF() * bins;
+            valueBData[(currentBlue == bins) ? bins - 1 : currentBlue]++;
         }
     }
     rBar->setName("R Value");
@@ -49,33 +49,24 @@ void PlottingDialog::drawRGBHistogram(QImage *img){
     bBar->setName("B Value");
     bBar->setBrush(QBrush(Qt::blue));
     int totalPix = img->width() * img->height();
-    QVector<double> tickVector;
-    for(int i = 0;i<16;i++){
+    for(int i = 0;i<bins;i++){
+        keyRData[i] = (i/(double) bins);
+        keyGData[i] = (i/(double) bins);
+        keyBData[i] = (i/(double) bins);
         valueRData[i] = valueRData[i] / (double)totalPix;
-        valueGData[i] = valueRData[i] / (double)totalPix;
-        valueBData[i] = valueRData[i] / (double)totalPix;
-        tickVector.append(i);
+        valueGData[i] = valueGData[i] / (double)totalPix;
+        valueBData[i] = valueBData[i] / (double)totalPix;
     }
     rBar->setData(keyRData, valueRData);
     gBar->setData(keyGData, valueGData);
     bBar->setData(keyBData, valueBData);
-    QStringList tickNames;
-    for (int i=0;i<255;i=i+16){
-        QString name = QString::number(i)/* + "-" + QString::number(i+15)*/;
-        qDebug() << "Appending" << name;
-        tickNames << name;
-    }
-
-    QVector<QString> vect = QVector<QString>::fromList(tickNames);
     ui->customPlot->legend->setVisible(true);
-    ui->customPlot->xAxis->setRange(0,17);
-    ui->customPlot->xAxis->setAutoTicks(false);
-    ui->customPlot->xAxis->setAutoTickStep(false);
-    ui->customPlot->xAxis->setTickStep(1);
-    ui->customPlot->xAxis->setAutoSubTicks(true);
-    ui->customPlot->xAxis->setAutoTickLabels(false);
-    ui->customPlot->xAxis->setTickVector(&tickVector, true);
-    ui->customPlot->xAxis->setTickVectorLabels(&vect, true);
+    ui->customPlot->xAxis->setLabel("Color %");
+    ui->customPlot->xAxis->setRange(0,1);
+    rBar->setWidth(1/(4*(double)bins));
+    gBar->setWidth(1/(4*(double)bins));
+    bBar->setWidth(1/(4*(double)bins));
+    ui->customPlot->yAxis->setLabel("Image %");
     ui->customPlot->yAxis->setRange(0,1);
     ui->customPlot->replot();
     qDebug() << "Replotting";

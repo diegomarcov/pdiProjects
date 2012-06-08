@@ -1,0 +1,5 @@
+0- sandbox: (modificar un canal RGB o YIQ, modificar saturación (I+Q), pseudo-color (mapear escala de grises a una paleta))
+1- histogramas: (mostrar histograma de luminancia; utilizar umbrales?)
+2- operaciones aritméticas (sumar, restar, multiplicar, dividir, if-ligther, if-darker; analizar clamping/promedio)
+3- convolución: (aplicar filtros a una imagen)
+4- morfología: (aplicar erosión, dilatación, e iteradores)
