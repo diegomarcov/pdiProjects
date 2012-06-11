@@ -1,0 +1,8 @@
+# Local gitignore for the operations project
+debug/*
+release/*
+Makefile*
+operations.pro.user
+ui_mainwindow.h
+operations
+moc_*
