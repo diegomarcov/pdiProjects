@@ -4,15 +4,32 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QDebug>
+#include "imgoperations.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     connect(ui->loadButton, SIGNAL(clicked()), this, SLOT(loadImage1()));
     connect(ui->loadButton2, SIGNAL(clicked()), this, SLOT(loadImage2()));
+    connect(ui->applyButton, SIGNAL(clicked()), this, SLOT(applyOperation()));
+    this->imgOps = ImgOperations();
+    ui->operationComboBox->addItems(this->imgOps.getOperationList());
 }
 
 MainWindow::~MainWindow() {
     delete ui;
+}
+
+void MainWindow::applyOperation(){
+    if (this->currentFirstImage->size() == this->currentSecondImage->size()){
+        QImage result = this->imgOps.applyOperation(ImgOperations::operationList(this->ui->operationComboBox->currentIndex()), this->currentFirstImage, this->currentSecondImage);
+        int height = (ui->imageLabel->maximumHeight() < result.height())? ui->imageLabel->maximumHeight() : result.height();
+        int width = (ui->imageLabel->maximumWidth() < result.width())?  ui->imageLabel->maximumWidth() : result.width();
+        ui->resultLabel->setPixmap(QPixmap::fromImage(result.scaled(QSize(width, height))));
+    } else {
+        QMessageBox::information(this, "Img Operations", "Las imagenes tienen diferente tamaño!");
+    }
+
+
 }
 
 QImage* MainWindow::loadImage(){

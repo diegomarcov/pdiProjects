@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "imgoperations.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,12 +19,14 @@ public:
 public slots:
     void loadImage1();
     void loadImage2();
+    void applyOperation();
 
 private:
     Ui::MainWindow *ui;
     QImage *loadImage();
     QImage *currentFirstImage;
     QImage *currentSecondImage;
+    ImgOperations imgOps;
 };
 
 #endif // MAINWINDOW_H
