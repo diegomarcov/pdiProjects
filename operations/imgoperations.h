@@ -9,11 +9,11 @@ class ImgOperations
 public:
     ImgOperations();
     enum operationList {OP_IMGSUM, OP_IMGDIFF, OP_IFDARKER, OP_IFLIGHTER};
-    QImage applyOperation(operationList, QImage *img1, QImage *img2);
+    QImage applyOperation(operationList, QImage *img1, QImage *img2, bool applyClamping);
     QStringList getOperationList();
 
-    QImage imgSum(QImage *img1, QImage *img2);
-    QImage imgDiff(QImage *img1, QImage *img2);
+    QImage imgSum(QImage *img1, QImage *img2, bool applyClamping);
+    QImage imgDiff(QImage *img1, QImage *img2, bool applyClamping);
     QImage ifDarker(QImage *img1, QImage *img2);
     QImage ifLighter(QImage *img1, QImage *img2);
 

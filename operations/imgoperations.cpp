@@ -1,6 +1,8 @@
 #include "imgoperations.h"
 #define CLAMP_SUM(a,b) ((a+b > 255)?255 : a+b)
 #define CLAMP_DIFF(a,b) ((a-b < 0)?0 : a-b)
+#define MID_SUM(a,b) ((a+b)/2)
+#define MID_DIFF(a,b) ((a-b)/2)
 #define MIN(a,b) ((a<b)?a:b)
 #define MAX(a,b) ((a>b)?a:b)
 #include <QColor>
@@ -14,13 +16,13 @@ ImgOperations::ImgOperations()
     this->opDescriptions.insert(ImgOperations::OP_IFLIGHTER, "If-Lighter");
 }
 
-QImage ImgOperations::applyOperation(operationList op, QImage *img1, QImage *img2){
+QImage ImgOperations::applyOperation(operationList op, QImage *img1, QImage *img2, bool clamp){
     qDebug() << "Applying operation " << op;
     switch(op){
         case OP_IMGSUM:
-            return imgSum(img1, img2);
+            return imgSum(img1, img2, clamp);
         case OP_IMGDIFF:
-            return imgDiff(img1, img2);
+            return imgDiff(img1, img2, clamp);
         case OP_IFDARKER:
             return ifDarker(img1, img2);
         case OP_IFLIGHTER:
@@ -29,7 +31,7 @@ QImage ImgOperations::applyOperation(operationList op, QImage *img1, QImage *img
     return QImage();
 }
 
-QImage ImgOperations::imgSum(QImage *img1, QImage *img2){
+QImage ImgOperations::imgSum(QImage *img1, QImage *img2, bool clamp){
     int w1 = img1->width();
     int w2 = img2->width();
     int h1 = img1->height();
@@ -39,19 +41,30 @@ QImage ImgOperations::imgSum(QImage *img1, QImage *img2){
     QColor pix2;
     QRgb resultPix;
     if((h1 == h2) && (w1 == w2)){
-        for (int x = 0; x < w1; x++){
-            for (int y = 0; y < h1; y++){
-                pix1.setRgb(img1->pixel(x,y));
-                pix2.setRgb(img2->pixel(x,y));
-                resultPix = qRgb(CLAMP_SUM(pix1.red(), pix2.red()), CLAMP_SUM(pix1.green(), pix2.green()), CLAMP_SUM(pix1.blue(), pix2.blue()));
-                result.setPixel(x, y, resultPix);
+        if (clamp){
+            for (int x = 0; x < w1; x++){
+                for (int y = 0; y < h1; y++){
+                    pix1.setRgb(img1->pixel(x,y));
+                    pix2.setRgb(img2->pixel(x,y));
+                    resultPix = qRgb(CLAMP_SUM(pix1.red(), pix2.red()), CLAMP_SUM(pix1.green(), pix2.green()), CLAMP_SUM(pix1.blue(), pix2.blue()));
+                    result.setPixel(x, y, resultPix);
+                }
+            }
+        } else {
+            for (int x = 0; x < w1; x++){
+                for (int y = 0; y < h1; y++){
+                    pix1.setRgb(img1->pixel(x,y));
+                    pix2.setRgb(img2->pixel(x,y));
+                    resultPix = qRgb(MID_SUM(pix1.red(), pix2.red()), MID_SUM(pix1.green(), pix2.green()), MID_SUM(pix1.blue(), pix2.blue()));
+                    result.setPixel(x, y, resultPix);
+                }
             }
         }
     }
     return result;
 }
 
-QImage ImgOperations::imgDiff(QImage *img1, QImage *img2){
+QImage ImgOperations::imgDiff(QImage *img1, QImage *img2, bool clamp){
     int w1 = img1->width();
     int w2 = img2->width();
     int h1 = img1->height();
@@ -61,12 +74,23 @@ QImage ImgOperations::imgDiff(QImage *img1, QImage *img2){
     QColor pix2;
     QRgb resultPix;
     if((h1 == h2) && (w1 == w2)){
-        for (int x = 0; x < w1; x++){
-            for (int y = 0; y < h1; y++){
-                pix1.setRgb(img1->pixel(x,y));
-                pix2.setRgb(img2->pixel(x,y));
-                resultPix = qRgb(CLAMP_DIFF(pix1.red(), pix2.red()), CLAMP_DIFF(pix1.green(), pix2.green()), CLAMP_DIFF(pix1.blue(), pix2.blue()));
-                result.setPixel(x, y, resultPix);
+        if (clamp){
+            for (int x = 0; x < w1; x++){
+                for (int y = 0; y < h1; y++){
+                    pix1.setRgb(img1->pixel(x,y));
+                    pix2.setRgb(img2->pixel(x,y));
+                    resultPix = qRgb(CLAMP_DIFF(pix1.red(), pix2.red()), CLAMP_DIFF(pix1.green(), pix2.green()), CLAMP_DIFF(pix1.blue(), pix2.blue()));
+                    result.setPixel(x, y, resultPix);
+                }
+            }
+        } else {
+            for (int x = 0; x < w1; x++){
+                for (int y = 0; y < h1; y++){
+                    pix1.setRgb(img1->pixel(x,y));
+                    pix2.setRgb(img2->pixel(x,y));
+                    resultPix = qRgb(MID_DIFF(pix1.red(), pix2.red()), MID_DIFF(pix1.green(), pix2.green()), MID_DIFF(pix1.blue(), pix2.blue()));
+                    result.setPixel(x, y, resultPix);
+                }
             }
         }
     }

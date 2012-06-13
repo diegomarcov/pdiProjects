@@ -21,15 +21,13 @@ MainWindow::~MainWindow() {
 
 void MainWindow::applyOperation(){
     if (this->currentFirstImage->size() == this->currentSecondImage->size()){
-        QImage result = this->imgOps.applyOperation(ImgOperations::operationList(this->ui->operationComboBox->currentIndex()), this->currentFirstImage, this->currentSecondImage);
+        QImage result = this->imgOps.applyOperation(ImgOperations::operationList(this->ui->operationComboBox->currentIndex()), this->currentFirstImage, this->currentSecondImage, ui->clampCheckBox->isChecked());
         int height = (ui->imageLabel->maximumHeight() < result.height())? ui->imageLabel->maximumHeight() : result.height();
         int width = (ui->imageLabel->maximumWidth() < result.width())?  ui->imageLabel->maximumWidth() : result.width();
         ui->resultLabel->setPixmap(QPixmap::fromImage(result.scaled(QSize(width, height))));
     } else {
         QMessageBox::information(this, "Img Operations", "Las imagenes tienen diferente tamaño!");
     }
-
-
 }
 
 QImage* MainWindow::loadImage(){
