@@ -1,0 +1,8 @@
+# Local gitignore for the convolution project
+debug/*
+release/*
+Makefile*
+convolution.pro.user
+ui_mainwindow.h
+moc_*
+convolution
