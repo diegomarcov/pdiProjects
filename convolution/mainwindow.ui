@@ -19,8 +19,8 @@
      <widget class="QLabel" name="imageLabel">
       <property name="maximumSize">
        <size>
-        <width>300</width>
-        <height>400</height>
+        <width>450</width>
+        <height>600</height>
        </size>
       </property>
       <property name="text">
@@ -28,12 +28,28 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="2" colspan="2">
+    <item row="0" column="2">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>15</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="3" colspan="2">
      <widget class="QLabel" name="resultLabel">
       <property name="maximumSize">
        <size>
-        <width>300</width>
-        <height>400</height>
+        <width>450</width>
+        <height>600</height>
        </size>
       </property>
       <property name="text">
@@ -48,10 +64,10 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="1" colspan="2">
+    <item row="1" column="1" colspan="3">
      <widget class="QComboBox" name="operationComboBox"/>
     </item>
-    <item row="1" column="3">
+    <item row="1" column="4">
      <widget class="QPushButton" name="applyButton">
       <property name="text">
        <string>Apply!</string>

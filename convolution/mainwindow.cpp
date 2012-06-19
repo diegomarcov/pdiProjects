@@ -3,11 +3,15 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDebug>
+#define MAX(a,b) ((a>b)? a : b)
+#define MIN(a,b) ((a<b)? a : b)
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
     connect(ui->loadButton, SIGNAL(clicked()), this, SLOT(loadImage()));
+    connect(ui->applyButton, SIGNAL(clicked()), this, SLOT(applyFilter()));
     this->currentImage = new QImage();
+    ui->operationComboBox->addItems(convolutions.getConvList());
 }
 
 MainWindow::~MainWindow()
@@ -21,11 +25,19 @@ void MainWindow::loadImage(){
         delete this->currentImage;
         this->currentImage = new QImage(fileName);
         if (this->currentImage->isNull()) {
-            QMessageBox::information(this, "Histogramas", "No se puede abrir el archivo!");
+            QMessageBox::information(this, "Convoluciones", "No se puede abrir el archivo!");
             return;
         }
-        int height = (ui->imageLabel->maximumHeight() < this->currentImage->height())? ui->imageLabel->maximumHeight() : this->currentImage->height();
-        int width = (ui->imageLabel->maximumWidth() < this->currentImage->width())?  ui->imageLabel->maximumWidth() : this->currentImage->width();
+        int height = MIN(ui->imageLabel->maximumHeight(), this->currentImage->height());
+        int width = MIN(ui->imageLabel->maximumWidth(), this->currentImage->width());
         ui->imageLabel->setPixmap(QPixmap::fromImage(this->currentImage->scaled(QSize(width, height))));
     }
+}
+
+void MainWindow::applyFilter(){
+    int height = MIN(ui->resultLabel->maximumHeight(), this->currentImage->height());
+    int width = MIN(ui->resultLabel->maximumWidth(), this->currentImage->width());
+    ui->resultLabel->setPixmap(QPixmap::fromImage(convolutions.applyConvolution(
+                                   ImgConvolutions::convolutionList(ui->operationComboBox->currentIndex()),
+                                   this->currentImage).scaled(width, height)));
 }

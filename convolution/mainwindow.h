@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "imgconvolutions.h"
 
 namespace Ui {
 class MainWindow;
@@ -17,10 +18,12 @@ public:
     
 public slots:
     void loadImage();
+    void applyFilter();
 
 private:
     Ui::MainWindow *ui;
     QImage *currentImage;
+    ImgConvolutions convolutions;
 };
 
 #endif // MAINWINDOW_H
