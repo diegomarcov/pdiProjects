@@ -8,16 +8,20 @@
 class ImgConvolutions
 {
 public:
-    enum convolutionList {CONV_PB3, CONV_PB5, CONV_PB7, CONV_BARTLETT3, CONV_BARTLETT5, CONV_BARTLETT7,
-                            CONV_GAUSS5, CONV_PA3, CONV_PA5, CONV_PA7, CONV_PA_LPv4, CONV_PA_LPv8};
-    QImage applyConvolution(convolutionList op, QImage *img);
+    enum convolutionList {CONV_PASABAJOS, CONV_PASAALTOS, CONV_BARTLETT, CONV_GAUSSIANO, CONV_SHARPEN, CONV_MOTIONBLUR,
+                          CONV_SOBEL, CONV_PA_LPv4, CONV_PA_LPv8};
+    QImage applyConvolution(convolutionList op, QImage *img, int filterSize);
     QStringList getConvList();
     ImgConvolutions();
 
 private:
     QHash<convolutionList, QString> convDescriptions;
+    QColor getColor(QPoint origin, QPoint offset, QImage *img) const;
+    QImage sobel(QImage *img);
     QImage pasaBajos(QImage *img, int filterSize);
+    QImage sharpen(QImage *img, int filterSize);
     QImage pasaAltos(QImage *img, int filterSize);
+    QImage motionBlur(QImage *img, int filterSize);
     QImage applyMatrix(QImage *img, QVector<double> matrix, double factor = 1.0, double bias = 0.0);
 };
 

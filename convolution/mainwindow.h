@@ -20,6 +20,9 @@ public slots:
     void loadImage();
     void applyFilter();
 
+private slots:
+    void on_sizeSpinBox_valueChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
     QImage *currentImage;

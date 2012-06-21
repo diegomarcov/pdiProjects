@@ -39,5 +39,16 @@ void MainWindow::applyFilter(){
     int width = MIN(ui->resultLabel->maximumWidth(), this->currentImage->width());
     ui->resultLabel->setPixmap(QPixmap::fromImage(convolutions.applyConvolution(
                                    ImgConvolutions::convolutionList(ui->operationComboBox->currentIndex()),
-                                   this->currentImage).scaled(width, height)));
+                                   this->currentImage, ui->sizeSpinBox->value()).scaled(width, height)));
+}
+
+void MainWindow::on_sizeSpinBox_valueChanged(int arg1)
+{
+    if(arg1 < 3){
+        ui->sizeSpinBox->setValue(3);
+    } else {
+        if((arg1 % 2) != 1){
+            ui->sizeSpinBox->setValue(arg1+1);
+        }
+    }
 }
