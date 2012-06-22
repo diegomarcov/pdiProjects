@@ -22,6 +22,8 @@ private:
     QImage sharpen(QImage *img, int filterSize);
     QImage pasaAltos(QImage *img, int filterSize);
     QImage motionBlur(QImage *img, int filterSize);
+    QImage laplacianov4(QImage *img);
+    QImage laplacianov8(QImage *img);
     QImage applyMatrix(QImage *img, QVector<double> matrix, double factor = 1.0, double bias = 0.0);
 };
 

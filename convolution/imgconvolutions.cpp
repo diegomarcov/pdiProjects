@@ -26,6 +26,7 @@ QStringList ImgConvolutions::getConvList(){
     return ops;
 }
 
+
 QImage ImgConvolutions::applyConvolution(convolutionList op, QImage *img1, int filterSize){
     switch(op){
         case CONV_PASABAJOS:
@@ -41,8 +42,9 @@ QImage ImgConvolutions::applyConvolution(convolutionList op, QImage *img1, int f
         case CONV_SOBEL:
             return sobel(img1);
         case CONV_PA_LPv4:
+            return laplacianov4(img1);
         case CONV_PA_LPv8:
-            return QImage();
+            return laplacianov8(img1);
     }
     return QImage();
 }
@@ -101,6 +103,34 @@ QImage ImgConvolutions::sobel(QImage *img){
     }
     return ret;
 }
+
+
+QImage ImgConvolutions::laplacianov4(QImage *img){
+    QVector<double> filterMatrix(9);
+    filterMatrix[0] = 0.0;
+    filterMatrix[1] = 1.0;
+    filterMatrix[2] = 0.0;
+    filterMatrix[3] = 1.0;
+    filterMatrix[4] = -4.0;
+    filterMatrix[5] = 1.0;
+    filterMatrix[6] = 0.0;
+    filterMatrix[7] = 1.0;
+    filterMatrix[8] = 0.0;
+    qDebug() << "Applying laplace v4";
+    QImage ret = applyMatrix(img, filterMatrix);
+    return ret;
+}
+
+
+QImage ImgConvolutions::laplacianov8(QImage *img){
+    QVector<double> filterMatrix(9);
+    filterMatrix.fill(1.0);
+    filterMatrix[4] = -8;
+    qDebug() << "Applying laplace v4";
+    QImage ret = applyMatrix(img, filterMatrix);
+    return ret;
+}
+
 
 QImage ImgConvolutions::motionBlur(QImage *img, int filterSize){
     QVector<double> filterMatrix(filterSize * filterSize);
