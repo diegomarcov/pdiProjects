@@ -1,0 +1,8 @@
+# Local gitignore for the histogram project
+debug/*
+release/*
+Makefile*
+morphology.pro.user
+ui_mainwindow.h
+moc_*
+morphology
