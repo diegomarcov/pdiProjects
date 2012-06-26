@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
     this->currentFirstImage = new QImage();
     this->currentSecondImage = new QImage();
+    ui->morphComboBox->addItems(this->morph.getOperationList());
 }
 
 MainWindow::~MainWindow()
@@ -42,4 +43,16 @@ void MainWindow::on_loadButton_clicked()
         }
         setImageOnLabel(this->currentFirstImage, ui->imageLabel);
     }
+}
+
+
+void MainWindow::on_applyButton_clicked()
+{
+    delete this->currentSecondImage;
+    this->currentSecondImage = new QImage(morph.applyOperation(
+                                      this->currentFirstImage,
+                                      ImgMorphology::morphologyList(ui->morphComboBox->currentIndex()),
+                                      ui->sizeSpinBox->value(),
+                                      ui->iterSpinBox->value()));
+    setImageOnLabel(this->currentSecondImage, ui->resultLabel);
 }
