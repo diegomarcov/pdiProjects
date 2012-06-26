@@ -1,0 +1,8 @@
+# Local gitignore for the histogram project
+debug/*
+release/*
+Makefile*
+fourier.pro.user
+ui_mainwindow.h
+moc_*
+fourier
